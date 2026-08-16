@@ -1,275 +1,621 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Currency Club Results</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#050609;--card:#0d0f14;--border:rgba(255,255,255,.08);--text:#f4f6fb;--muted:#8b92a3;--accent:#6d7cff;--accent2:#8b5cf6;--green:#28d17c;--yellow:#f5c542;--red:#ff5f6d}
-html{scroll-behavior:smooth}
-body{min-height:100vh;background:radial-gradient(circle at 50% -10%,rgba(109,124,255,.18),transparent 35%),radial-gradient(circle at 100% 30%,rgba(139,92,246,.10),transparent 30%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;padding:24px 16px 50px}
-.wrap{max-width:640px;margin:0 auto}
-.hdr{text-align:center;padding:16px 10px 24px}
-.logo{width:56px;height:56px;margin:0 auto 14px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6475ff,#8b5cf6);box-shadow:0 10px 35px rgba(109,124,255,.3);font-weight:900;font-size:22px;letter-spacing:-1px;color:#fff}
-.hdr h1{font-size:26px;font-weight:800;letter-spacing:-.6px}
-.hdr .sub{color:var(--muted);margin-top:7px;font-size:13px}
-.lang{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
-.lang button{border:1px solid var(--border);background:rgba(255,255,255,.035);color:#9da4b4;padding:7px 11px;border-radius:9px;font-size:11px;cursor:pointer;transition:.2s;font-weight:500}
-.lang button.on{color:#fff;border-color:rgba(109,124,255,.5);background:rgba(109,124,255,.13)}
-.card{border:1px solid var(--border);background:rgba(13,15,20,.88);border-radius:18px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px)}
-.card.flat{padding:0;overflow:hidden}
-.st-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.st-label{color:var(--muted);font-size:12px}
-.st-num{font-size:22px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
-.live{display:flex;align-items:center;gap:6px;color:var(--green);font-size:11px;font-weight:700}
-.dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 10px rgba(40,209,124,.7);animation:blink 1.6s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.bar{margin-top:14px;height:6px;background:rgba(255,255,255,.06);border-radius:20px;overflow:hidden}
-.bar>div{height:100%;width:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:20px;transition:width 1s linear}
-.st-foot{margin-top:9px;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
-.res{text-align:center;padding:26px 20px;border-color:rgba(109,124,255,.2);background:radial-gradient(circle at 50% 0%,rgba(109,124,255,.12),transparent 55%),var(--card)}
-.res-ttl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1.5px}
-.res-num{margin:12px 0 6px;font-size:64px;line-height:1;font-weight:900;letter-spacing:6px;font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(109,124,255,.3)}
-.res-num.loading{color:#5a6172;animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.res-st{font-size:11px;font-weight:700}
-.res-st.ok{color:var(--green)}.res-st.wait{color:var(--yellow)}.res-st.err{color:var(--red)}
-.sec-ttl{font-size:11px;color:var(--muted);margin:0 4px 8px;text-transform:uppercase;letter-spacing:1px}
-.row{padding:14px 16px;border-bottom:1px solid var(--border)}
-.row:last-child{border-bottom:none}
-.row-lbl{font-size:11px;color:var(--muted);margin-bottom:6px}
-.row-val{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#e0e4ee;word-break:break-all;line-height:1.55}
-.row-val.click{cursor:pointer}.row-val.click:hover{color:#9da8ff}
-.chain-row{display:flex;align-items:center;gap:12px}
-.chain-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
-.chain-ico.btc{background:rgba(247,147,26,.15);color:#f7931a}
-.chain-ico.trx{background:rgba(255,56,92,.15);color:#ff385c}
-.chain-ico.ton{background:rgba(0,136,204,.15);color:#0088cc}
-.chain-info{flex:1;min-width:0}
-.chain-name{font-size:13px;font-weight:700;margin-bottom:2px}
-.chain-st{font-size:10px;color:var(--muted)}
-.chain-hash{font-family:monospace;font-size:10px;color:#8b92a3;margin-top:2px;word-break:break-all}
-.formula .num{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
-.verify{text-align:center;padding:20px}
-.verify h3{font-size:16px;font-weight:800;margin-bottom:7px}
-.verify p{color:var(--muted);font-size:11px;line-height:1.6;margin-bottom:14px}
-.vbtn{width:100%;padding:13px;border-radius:13px;border:1px solid rgba(109,124,255,.4);background:rgba(109,124,255,.08);color:#fff;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:.2s}
-.vbtn:hover{background:rgba(109,124,255,.16);border-color:rgba(109,124,255,.6)}
-.vbtn:active{transform:scale(.98)}
-.foot{text-align:center;color:#4a5060;font-size:10px;margin-top:22px;line-height:1.7}
-.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(16px);background:#171a22;border:1px solid var(--border);color:#fff;padding:9px 15px;border-radius:10px;font-size:11px;opacity:0;pointer-events:none;transition:.25s;z-index:100}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:420px){.res-num{font-size:52px;letter-spacing:4px}.hdr h1{font-size:22px}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header class="hdr">
-    <div class="logo">CC</div>
-    <h1 id="t-title">Currency Club Results</h1>
-    <div class="sub" id="t-sub">Public Blockchain Verification</div>
-  </header>
-
-  <div class="lang" id="langBar">
-    <button data-lang="en" class="on">English</button>
-    <button data-lang="zh">中文</button>
-    <button data-lang="ja">日本語</button>
-    <button data-lang="ko">한국어</button>
-    <button data-lang="ru">Русский</button>
-  </div>
-
-  <div class="card">
-    <div class="st-top">
-      <div>
-        <div class="st-label" id="t-round">Current Round</div>
-        <div class="st-num" id="roundNum">----</div>
-      </div>
-      <div class="live"><span class="dot"></span><span id="t-live">LIVE</span></div>
-    </div>
-    <div class="bar"><div id="progBar"></div></div>
-    <div class="st-foot">
-      <span id="t-next">Next round</span>
-      <span id="countdown">11:00</span>
-    </div>
-  </div>
-
-  <div class="card res">
-    <div class="res-ttl" id="t-result">4-Digit Result</div>
-    <div class="res-num loading" id="resNum">----</div>
-    <div class="res-st wait" id="resSt">Fetching latest on-chain block</div>
-  </div>
-
-  <div class="sec-ttl" id="t-rounddata">Round Data</div>
-  <div class="card flat">
-    <div class="row"><div class="row-lbl" id="t-rid">Round ID</div><div class="row-val" id="rid">----</div></div>
-    <div class="row"><div class="row-lbl" id="t-rtime">Round Start (UTC+0)</div><div class="row-val" id="rtime">----</div></div>
-    <div class="row"><div class="row-lbl" id="t-source">Source Hash (SHA-256)</div><div class="row-val click" id="srcHash" onclick="cp(this)">----</div></div>
-  </div>
-
-  <div class="sec-ttl" id="t-chains">Blockchain Sources</div>
-  <div class="card flat">
-    <div class="row"><div class="chain-row"><div class="chain-ico btc">BTC</div><div class="chain-info"><div class="chain-name">Bitcoin</div><div class="chain-st" id="btcSt">Fetching...</div><div class="chain-hash" id="btcHash">----</div></div></div></div>
-    <div class="row"><div class="chain-row"><div class="chain-ico trx">TRX</div><div class="chain-info"><div class="chain-name">TRON</div><div class="chain-st" id="tronSt">Fetching...</div><div class="chain-hash" id="tronHash">----</div></div></div></div>
-    <div class="row"><div class="chain-row"><div class="chain-ico ton">TON</div><div class="chain-info"><div class="chain-name">TON</div><div class="chain-st" id="tonSt">Fetching...</div><div class="chain-hash" id="tonHash">----</div></div></div></div>
-  </div>
-
-  <div class="sec-ttl" id="t-calc">Verification Calculation</div>
-  <div class="card flat">
-    <div class="row"><div class="row-lbl" id="t-orig">Original Data</div><div class="row-val click" id="origData" onclick="cp(this)">----</div></div>
-    <div class="row"><div class="row-lbl">SHA-256</div><div class="row-val click" id="shaVal" onclick="cp(this)">----</div></div>
-    <div class="row formula"><div class="row-lbl" id="t-formula">Result Formula</div><div class="row-val">SHA-256 &rarr; Rejection Sampling &rarr; <span class="num">0000&ndash;9999</span></div></div>
-  </div>
-
-  <div class="card verify">
-    <h3 id="t-verifylbl">Independent Verification</h3>
-    <p id="t-verifydesc">Anyone can independently verify this result using the Round ID, blockchain block hashes and public calculation rules shown above.</p>
-    <button class="vbtn" id="t-verifybtn" onclick="doVerify()">VERIFY RESULT</button>
-  </div>
-
-  <div class="foot">
-    Currency Club Results<br>
-    <span id="t-foot">Public blockchain based verification system</span>
-  </div>
-</div>
-<div class="toast" id="toast">Copied</div>
-
 <script>
 const L={
-en:{title:"Currency Club Results",sub:"Public Blockchain Verification",round:"Current Round",live:"LIVE",next:"Next round",result:"4-Digit Result",wait:"Fetching latest on-chain block",rounddata:"Round Data",rid:"Round ID",rtime:"Round Start (UTC+0)",source:"Source Hash (SHA-256)",chains:"Blockchain Sources",calc:"Verification Calculation",orig:"Original Data",formula:"Result Formula",verifylbl:"Independent Verification",verifydesc:"Anyone can independently verify this result using the Round ID, blockchain block hashes and public calculation rules shown above.",verifybtn:"VERIFY RESULT",foot:"Public blockchain based verification system",ready:"Verified from public blockchain data",error:"Public data unavailable. Result not generated.",fetched:"Block fetched",verifyOk:"PASS - Result matches",verifyFail:"FAIL - Result mismatch",noResult:"No result to verify yet",copied:"Copied"},
-zh:{title:"Currency Club Results",sub:"公开区块链验证",round:"当前轮次",live:"实时",next:"下一轮",result:"四位开奖结果",wait:"正在获取最新链上区块",rounddata:"轮次数据",rid:"轮次 ID",rtime:"轮次开始时间 (UTC+0)",source:"数据源 Hash (SHA-256)",chains:"区块链数据源",calc:"验证计算",orig:"原始数据",formula:"结果计算规则",verifylbl:"独立验证",verifydesc:"任何人都可以使用上方公开的轮次 ID、区块链区块哈希和计算规则独立验证此结果。",verifybtn:"验证结果",foot:"基于公开区块链的验证系统",ready:"公开区块链数据验证完成",error:"公开数据获取失败，本轮不生成结果。",fetched:"区块已获取",verifyOk:"验证通过：结果一致",verifyFail:"验证失败：结果不一致",noResult:"暂无结果可验证",copied:"已复制"},
-ja:{title:"Currency Club Results",sub:"公開ブロックチェーン検証",round:"現在のラウンド",live:"LIVE",next:"次回ラウンド",result:"4桁結果",wait:"最新オンチェーンブロックを取得中",rounddata:"ラウンドデータ",rid:"ラウンド ID",rtime:"ラウンド開始 (UTC+0)",source:"ソース Hash (SHA-256)",chains:"ブロックチェーンソース",calc:"検証計算",orig:"元データ",formula:"結果計算式",verifylbl:"独立検証",verifydesc:"上記のラウンド ID、ブロックハッシュ、公開計算ルールを使用して、誰でも結果を独立に検証できます。",verifybtn:"結果を検証",foot:"公開ブロックチェーン検証システム",ready:"公開ブロックチェーンで検証済み",error:"公開データを取得できません。結果は生成されません。",fetched:"ブロック取得済み",verifyOk:"合格 - 結果が一致",verifyFail:"不合格 - 結果が不一致",noResult:"検証する結果がありません",copied:"コピーしました"},
-ko:{title:"Currency Club Results",sub:"공개 블록체인 검증",round:"현재 라운드",live:"LIVE",next:"다음 라운드",result:"4자리 결과",wait:"최신 온체인 블록 가져오는 중",rounddata:"라운드 데이터",rid:"라운드 ID",rtime:"라운드 시작 (UTC+0)",source:"소스 Hash (SHA-256)",chains:"블록체인 소스",calc:"검증 계산",orig:"원본 데이터",formula:"결과 계산 방식",verifylbl:"독립 검증",verifydesc:"위에 표시된 라운드 ID, 블록체인 블록 해시 및 공개 계산 규칙을 사용하여 누구나 이 결과를 독립적으로 검증할 수 있습니다.",verifybtn:"결과 검증",foot:"공개 블록체인 기반 검증 시스템",ready:"공개 블록체인 데이터 검증 완료",error:"공개 데이터를 가져올 수 없습니다. 결과를 생성하지 않습니다.",fetched:"블록 가져옴",verifyOk:"통과 - 결과 일치",verifyFail:"실패 - 결과 불일치",noResult:"검증할 결과가 없습니다",copied:"복사됨"},
-ru:{title:"Currency Club Results",sub:"Проверка через публичный блокчейн",round:"Текущий раунд",live:"LIVE",next:"Следующий раунд",result:"Результат из 4 цифр",wait:"Получение последнего блока блокчейна",rounddata:"Данные раунда",rid:"ID раунда",rtime:"Начало раунда (UTC+0)",source:"Хеш источника (SHA-256)",chains:"Источники блокчейна",calc:"Проверочный расчёт",orig:"Исходные данные",formula:"Формула результата",verifylbl:"Независимая проверка",verifydesc:"Любой может независимо проверить этот результат, используя ID раунда, хеши блоков и публичные правила расчёта выше.",verifybtn:"ПРОВЕРИТЬ РЕЗУЛЬТАТ",foot:"Система проверки на основе публичного блокчейна",ready:"Проверено по публичным данным блокчейна",error:"Не удалось получить публичные данные. Результат не создан.",fetched:"Блок получен",verifyOk:"УСПЕХ - результат совпадает",verifyFail:"ОШИБКА - результат не совпадает",noResult:"Нет результата для проверки",copied:"Скопировано"}
+en:{
+title:"Currency Club Results",
+sub:"Public Blockchain Verification",
+round:"Current Round",
+live:"LIVE",
+next:"Next round",
+result:"4-Digit Result",
+wait:"Fetching verified round data",
+rounddata:"Round Data",
+rid:"Round ID",
+rtime:"Round Start (UTC+0)",
+source:"Source Hash (SHA-256)",
+chains:"Blockchain Sources",
+calc:"Verification Calculation",
+orig:"Original Data",
+formula:"Result Formula",
+verifylbl:"Independent Verification",
+verifydesc:"Anyone can independently verify this result using the Round ID, blockchain block hashes and public calculation rules shown above.",
+verifybtn:"VERIFY RESULT",
+foot:"Public blockchain based verification system",
+ready:"Verified from public blockchain data",
+error:"Public data unavailable. Result not generated.",
+fetched:"Block fetched",
+verifyOk:"PASS - Result matches",
+verifyFail:"FAIL - Result mismatch",
+noResult:"No result to verify yet",
+copied:"Copied"
+},
+
+zh:{
+title:"Currency Club Results",
+sub:"公开区块链验证",
+round:"当前轮次",
+live:"实时",
+next:"下一轮",
+result:"四位开奖结果",
+wait:"正在获取已验证的轮次数据",
+rounddata:"轮次数据",
+rid:"轮次 ID",
+rtime:"轮次开始时间 (UTC+0)",
+source:"数据源 Hash (SHA-256)",
+chains:"区块链数据源",
+calc:"验证计算",
+orig:"原始数据",
+formula:"结果计算规则",
+verifylbl:"独立验证",
+verifydesc:"任何人都可以使用上方公开的轮次 ID、区块链区块哈希和计算规则独立验证此结果。",
+verifybtn:"验证结果",
+foot:"基于公开区块链的验证系统",
+ready:"公开区块链数据验证完成",
+error:"公开数据获取失败，本轮不生成结果。",
+fetched:"区块已获取",
+verifyOk:"验证通过：结果一致",
+verifyFail:"验证失败：结果不一致",
+noResult:"暂无结果可验证",
+copied:"已复制"
+},
+
+ja:{
+title:"Currency Club Results",
+sub:"公開ブロックチェーン検証",
+round:"現在のラウンド",
+live:"LIVE",
+next:"次回ラウンド",
+result:"4桁結果",
+wait:"検証済みラウンドデータを取得中",
+rounddata:"ラウンドデータ",
+rid:"ラウンド ID",
+rtime:"ラウンド開始 (UTC+0)",
+source:"ソース Hash (SHA-256)",
+chains:"ブロックチェーンソース",
+calc:"検証計算",
+orig:"元データ",
+formula:"結果計算式",
+verifylbl:"独立検証",
+verifydesc:"上記のラウンド ID、ブロックハッシュ、公開計算ルールを使用して、誰でも結果を独立に検証できます。",
+verifybtn:"結果を検証",
+foot:"公開ブロックチェーン検証システム",
+ready:"公開ブロックチェーンで検証済み",
+error:"公開データを取得できません。結果は生成されません。",
+fetched:"ブロック取得済み",
+verifyOk:"合格 - 結果が一致",
+verifyFail:"不合格 - 結果が不一致",
+noResult:"検証する結果がありません",
+copied:"コピーしました"
+},
+
+ko:{
+title:"Currency Club Results",
+sub:"공개 블록체인 검증",
+round:"현재 라운드",
+live:"LIVE",
+next:"다음 라운드",
+result:"4자리 결과",
+wait:"검증된 라운드 데이터를 가져오는 중",
+rounddata:"라운드 데이터",
+rid:"라운드 ID",
+rtime:"라운드 시작 (UTC+0)",
+source:"소스 Hash (SHA-256)",
+chains:"블록체인 소스",
+calc:"검증 계산",
+orig:"원본 데이터",
+formula:"결과 계산 방식",
+verifylbl:"독립 검증",
+verifydesc:"위에 표시된 라운드 ID, 블록체인 블록 해시 및 공개 계산 규칙을 사용하여 누구나 이 결과를 독립적으로 검증할 수 있습니다.",
+verifybtn:"결과 검증",
+foot:"공개 블록체인 기반 검증 시스템",
+ready:"공개 블록체인 데이터 검증 완료",
+error:"공개 데이터를 가져올 수 없습니다. 결과를 생성하지 않습니다.",
+fetched:"블록 가져옴",
+verifyOk:"통과 - 결과 일치",
+verifyFail:"실패 - 결과 불일치",
+noResult:"검증할 결과가 없습니다",
+copied:"복사됨"
+},
+
+ru:{
+title:"Currency Club Results",
+sub:"Проверка через публичный блокчейн",
+round:"Текущий раунд",
+live:"LIVE",
+next:"Следующий раунд",
+result:"Результат из 4 цифр",
+wait:"Получение проверенных данных раунда",
+rounddata:"Данные раунда",
+rid:"ID раунда",
+rtime:"Начало раунда (UTC+0)",
+source:"Хеш источника (SHA-256)",
+chains:"Источники блокчейна",
+calc:"Проверочный расчёт",
+orig:"Исходные данные",
+formula:"Формула результата",
+verifylbl:"Независимая проверка",
+verifydesc:"Любой может независимо проверить этот результат, используя ID раунда, хеши блоков и публичные правила расчёта выше.",
+verifybtn:"ПРОВЕРИТЬ РЕЗУЛЬТАТ",
+foot:"Система проверки на основе публичного блокчейна",
+ready:"Проверено по публичным данным блокчейна",
+error:"Не удалось получить публичные данные. Результат не создан.",
+fetched:"Блок получен",
+verifyOk:"УСПЕХ - результат совпадает",
+verifyFail:"ОШИБКА - результат не совпадает",
+noResult:"Нет результата для проверки",
+copied:"Скопировано"
+}
 };
 
-let lang="en",curRound=null,result=null;
+let lang="en";
+let curRound=null;
+let result=null;
+
 const RS=660;
 
-function $(id){return document.getElementById(id)}
+/*
+ * 如果 index.html 和 Worker 在同一个域名：
+ *
+ * API_BASE = ""
+ *
+ * 如果 Worker 是单独的 workers.dev：
+ *
+ * API_BASE = "https://你的-worker.workers.dev"
+ */
+const API_BASE="";
+
+function $(id){
+  return document.getElementById(id);
+}
 
 function setLang(l){
-  lang=l;const t=L[l];
-  document.documentElement.lang=l==="zh"?"zh-CN":l;
-  $("t-title").textContent=t.title;$("t-sub").textContent=t.sub;
-  $("t-round").textContent=t.round;$("t-live").textContent=t.live;
-  $("t-next").textContent=t.next;$("t-result").textContent=t.result;
-  $("t-rounddata").textContent=t.rounddata;$("t-rid").textContent=t.rid;
-  $("t-rtime").textContent=t.rtime;$("t-source").textContent=t.source;
-  $("t-chains").textContent=t.chains;$("t-calc").textContent=t.calc;
-  $("t-orig").textContent=t.orig;$("t-formula").textContent=t.formula;
-  $("t-verifylbl").textContent=t.verifylbl;$("t-verifydesc").textContent=t.verifydesc;
-  $("t-verifybtn").textContent=t.verifybtn;$("t-foot").textContent=t.foot;
-  document.querySelectorAll("#langBar button").forEach(b=>b.classList.toggle("on",b.dataset.lang===l));
-  const st=$("resSt");
-  if(st.classList.contains("wait"))st.textContent=t.wait;
-}
-document.querySelectorAll("#langBar button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+  lang=l;
 
-function getRound(){return Math.floor(Date.now()/(RS*1000))}
-function roundStart(r){return r*RS*1000}
-function fmtUTC(ts){return new Date(ts).toISOString().replace("T"," ").replace(".000Z"," UTC")}
+  const t=L[l];
+
+  document.documentElement.lang=
+    l==="zh" ? "zh-CN" : l;
+
+  $("t-title").textContent=t.title;
+  $("t-sub").textContent=t.sub;
+
+  $("t-round").textContent=t.round;
+  $("t-live").textContent=t.live;
+  $("t-next").textContent=t.next;
+  $("t-result").textContent=t.result;
+
+  $("t-rounddata").textContent=t.rounddata;
+  $("t-rid").textContent=t.rid;
+  $("t-rtime").textContent=t.rtime;
+  $("t-source").textContent=t.source;
+
+  $("t-chains").textContent=t.chains;
+  $("t-calc").textContent=t.calc;
+
+  $("t-orig").textContent=t.orig;
+  $("t-formula").textContent=t.formula;
+
+  $("t-verifylbl").textContent=t.verifylbl;
+  $("t-verifydesc").textContent=t.verifydesc;
+  $("t-verifybtn").textContent=t.verifybtn;
+  $("t-foot").textContent=t.foot;
+
+  document
+    .querySelectorAll("#langBar button")
+    .forEach(b=>{
+      b.classList.toggle(
+        "on",
+        b.dataset.lang===l
+      );
+    });
+
+  const st=$("resSt");
+
+  if(
+    st.classList.contains("wait")
+  ){
+    st.textContent=t.wait;
+  }
+}
+
+document
+  .querySelectorAll("#langBar button")
+  .forEach(b=>{
+    b.onclick=()=>{
+      setLang(b.dataset.lang);
+    };
+  });
+
+function getRound(){
+  return Math.floor(
+    Date.now()/(RS*1000)
+  );
+}
+
+function roundStart(r){
+  return r*RS*1000;
+}
+
+function fmtUTC(ts){
+  return new Date(ts)
+    .toISOString()
+    .replace("T"," ")
+    .replace(".000Z"," UTC");
+}
 
 function tick(){
-  const now=Date.now(),r=getRound(),start=roundStart(r),next=start+RS*1000;
-  const rem=Math.max(0,next-now),pct=rem/(RS*1000)*100;
-  $("progBar").style.width=pct+"%";
-  const s=Math.ceil(rem/1000);
-  $("countdown").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
-  $("roundNum").textContent=r;$("rid").textContent=r;$("rtime").textContent=fmtUTC(start);
-  if(curRound!==r){curRound=r;result=null;resetUI();fetchChains();}
+  const now=Date.now();
+
+  const r=getRound();
+
+  const start=roundStart(r);
+
+  const next=
+    start+
+    RS*1000;
+
+  const rem=Math.max(
+    0,
+    next-now
+  );
+
+  const pct=
+    rem/
+    (RS*1000)*
+    100;
+
+  $("progBar").style.width=
+    pct+"%";
+
+  const s=
+    Math.ceil(rem/1000);
+
+  $("countdown").textContent=
+    String(
+      Math.floor(s/60)
+    ).padStart(2,"0")
+    +
+    ":"
+    +
+    String(
+      s%60
+    ).padStart(2,"0");
+
+  $("roundNum").textContent=r;
+
+  $("rid").textContent=r;
+
+  $("rtime").textContent=
+    fmtUTC(start);
+
+  /*
+   * 只有真正进入下一轮时才重新请求 Worker。
+   */
+  if(curRound!==r){
+    curRound=r;
+
+    result=null;
+
+    resetUI();
+
+    fetchRound(r);
+  }
 }
 
 function resetUI(){
   const t=L[lang];
-  $("resNum").textContent="----";$("resNum").classList.add("loading");
-  $("resSt").className="res-st wait";$("resSt").textContent=t.wait;
-  ["btcHash","tronHash","tonHash","srcHash","origData","shaVal"].forEach(id=>$(id).textContent="----");
-  ["btcSt","tronSt","tonSt"].forEach(id=>$(id).textContent=t.wait);
+
+  $("resNum").textContent="----";
+
+  $("resNum")
+    .classList
+    .add("loading");
+
+  $("resSt").className=
+    "res-st wait";
+
+  $("resSt").textContent=
+    t.wait;
+
+  [
+    "btcHash",
+    "tronHash",
+    "tonHash",
+    "srcHash",
+    "origData",
+    "shaVal"
+  ].forEach(id=>{
+    $(id).textContent="----";
+  });
+
+  [
+    "btcSt",
+    "tronSt",
+    "tonSt"
+  ].forEach(id=>{
+    $(id).textContent=t.wait;
+  });
 }
 
-async function sha256hex(s){
-  const b=new TextEncoder().encode(s);
-  const h=await crypto.subtle.digest("SHA-256",b);
-  return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-
-async function fair4(seed){
-  const M=2n**256n,T=10000n,rem=M%T;
-  let hex=await sha256hex(seed),big=BigInt("0x"+hex);
-  while(big>=M-rem){hex=await sha256hex(hex);big=BigInt("0x"+hex);}
-  return String(big%T).padStart(4,"0");
-}
-
-async function getBTC(){
-  const r=await fetch("https://mempool.space/api/blocks/tip/hash",{cache:"no-store"});
-  if(!r.ok)throw new Error("BTC");
-  const h=(await r.text()).trim();
-  if(!/^[a-f0-9]{64}$/i.test(h))throw new Error("BTC bad");
-  return h.toLowerCase();
-}
-async function getTRON(){
-  const r=await fetch("https://api.trongrid.io/wallet/getnowblock",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",cache:"no-store"});
-  if(!r.ok)throw new Error("TRON");
-  const d=await r.json();
-  if(!d.blockID)throw new Error("TRON bad");
-  return d.blockID.toLowerCase();
-}
-async function getTON(){
-  const r=await fetch("https://toncenter.com/api/v3/masterchainInfo",{cache:"no-store"});
-  if(!r.ok)throw new Error("TON");
-  const d=await r.json();
-  const c=[d.last?.hash,d.last?.block_id?.hash,d.last?.root_hash,d.last?.id?.hash,d.masterchain?.hash];
-  const h=c.find(x=>typeof x==="string"&&x.length>0);
-  if(!h)throw new Error("TON bad");
-  return h.toLowerCase();
-}
-
-async function fetchChains(){
+async function fetchRound(round){
   const t=L[lang];
+
   try{
-    const [btc,tron,ton]=await Promise.all([getBTC(),getTRON(),getTON()]);
-    $("btcHash").textContent=btc;$("tronHash").textContent=tron;$("tonHash").textContent=ton;
-    ["btcSt","tronSt","tonSt"].forEach(id=>$(id).textContent=t.fetched);
-    const r=getRound();
-    const orig=["CC","ROUND",r,"BTC",btc,"TRON",tron,"TON",ton].join("|");
-    $("origData").textContent=orig;
-    const sha=await sha256hex(orig);
-    $("shaVal").textContent=sha;$("srcHash").textContent=sha;
-    const res=await fair4(orig);
-    result={round:r,btc,tron,ton,orig,sha,res};
-    $("resNum").textContent=res;$("resNum").classList.remove("loading");
-    $("resSt").className="res-st ok";$("resSt").textContent=t.ready;
+    const url=
+      API_BASE+
+      "/api/result?round="+
+      encodeURIComponent(round);
+
+    const response=
+      await fetch(
+        url,
+        {
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+    if(!response.ok){
+      throw new Error(
+        "Worker HTTP "+response.status
+      );
+    }
+
+    const payload=
+      await response.json();
+
+    if(
+      !payload.ok ||
+      !payload.data
+    ){
+      throw new Error(
+        payload.error ||
+        "Invalid Worker response"
+      );
+    }
+
+    const d=payload.data;
+
+    /*
+     * 防止旧 Round 的请求晚返回，
+     * 覆盖当前 Round 的页面。
+     */
+    if(
+      Number(d.round)!==
+      Number(getRound())
+    ){
+      return;
+    }
+
+    result={
+      round:d.round,
+      btc:d.btc,
+      tron:d.tron,
+      ton:d.ton,
+      orig:d.orig,
+      sha:d.sha,
+      res:d.result
+    };
+
+    $("roundNum").textContent=
+      d.round;
+
+    $("rid").textContent=
+      d.round;
+
+    $("rtime").textContent=
+      fmtUTC(d.roundStart);
+
+    $("btcHash").textContent=
+      d.btc;
+
+    $("tronHash").textContent=
+      d.tron;
+
+    $("tonHash").textContent=
+      d.ton;
+
+    $("btcSt").textContent=
+      t.fetched;
+
+    $("tronSt").textContent=
+      t.fetched;
+
+    $("tonSt").textContent=
+      t.fetched;
+
+    $("origData").textContent=
+      d.orig;
+
+    $("shaVal").textContent=
+      d.sha;
+
+    $("srcHash").textContent=
+      d.sha;
+
+    $("resNum").textContent=
+      d.result;
+
+    $("resNum")
+      .classList
+      .remove("loading");
+
+    $("resSt").className=
+      "res-st ok";
+
+    $("resSt").textContent=
+      t.ready;
+
   }catch(e){
+
     console.error(e);
-    $("resNum").textContent="----";$("resNum").classList.remove("loading");
-    $("resSt").className="res-st err";$("resSt").textContent=t.error;
+
+    $("resNum").textContent=
+      "----";
+
+    $("resNum")
+      .classList
+      .remove("loading");
+
+    $("resSt").className=
+      "res-st err";
+
+    $("resSt").textContent=
+      t.error;
   }
 }
 
+async function sha256hex(s){
+  const b=
+    new TextEncoder()
+      .encode(s);
+
+  const h=
+    await crypto.subtle.digest(
+      "SHA-256",
+      b
+    );
+
+  return Array
+    .from(
+      new Uint8Array(h)
+    )
+    .map(
+      x=>
+        x.toString(16)
+         .padStart(2,"0")
+    )
+    .join("");
+}
+
+async function fair4(seed){
+  const M=2n**256n;
+  const T=10000n;
+  const rem=M%T;
+
+  let hex=
+    await sha256hex(seed);
+
+  let big=
+    BigInt("0x"+hex);
+
+  while(
+    big>=M-rem
+  ){
+    hex=
+      await sha256hex(hex);
+
+    big=
+      BigInt("0x"+hex);
+  }
+
+  return String(
+    big%T
+  ).padStart(4,"0");
+}
+
 function cp(el){
-  const v=el.textContent.trim();
-  if(!v||v==="----")return;
-  navigator.clipboard.writeText(v).then(()=>{
-    const toast=$("toast");toast.textContent=L[lang].copied;toast.classList.add("show");
-    setTimeout(()=>toast.classList.remove("show"),1200);
-  }).catch(()=>{});
+  const v=
+    el.textContent.trim();
+
+  if(
+    !v ||
+    v==="----"
+  ){
+    return;
+  }
+
+  navigator
+    .clipboard
+    .writeText(v)
+    .then(()=>{
+      const toast=$("toast");
+
+      toast.textContent=
+        L[lang].copied;
+
+      toast.classList.add(
+        "show"
+      );
+
+      setTimeout(()=>{
+        toast.classList.remove(
+          "show"
+        );
+      },1200);
+    })
+    .catch(()=>{});
 }
 
 async function doVerify(){
+
   const t=L[lang];
-  if(!result){alert(t.noResult);return;}
+
+  if(!result){
+    alert(t.noResult);
+    return;
+  }
+
   try{
-    const sha=await sha256hex(result.orig);
-    const res=await fair4(result.orig);
-    alert((sha===result.sha&&res===result.res)?t.verifyOk+"\n"+res:t.verifyFail);
-  }catch(e){alert(t.verifyFail);}
+
+    /*
+     * 前端只验证 Worker 已经保存的
+     * 原始数据。
+     *
+     * 不重新请求 BTC/TRON/TON。
+     */
+
+    const sha=
+      await sha256hex(
+        result.orig
+      );
+
+    const res=
+      await fair4(
+        result.orig
+      );
+
+    if(
+      sha===result.sha &&
+      res===result.res
+    ){
+
+      alert(
+        t.verifyOk+
+        "\n"+
+        res
+      );
+
+    }else{
+
+      alert(
+        t.verifyFail
+      );
+    }
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      t.verifyFail
+    );
+  }
 }
 
 setLang("en");
+
+/*
+ * 先初始化一次页面，
+ * tick() 会负责第一次请求。
+ */
 tick();
-setInterval(tick,1000);
-fetchChains();
+
+setInterval(
+  tick,
+  1000
+);
 </script>
-</body>
-</html>
